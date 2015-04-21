@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hexagon Test</title>
+    <link type="text/css" rel="stylesheet" href="css/css_reset.css">
+    <link type="text/css" rel="stylesheet" href="css/test.css">
+    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Oswald:regular&amp;subset=latin"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <meta charset="UTF-8">
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="hexagon">
+        <p> HELLO</p>
+      </div>
+      <div id="background">
+      </div>
+      <script>
+        var $window = $(window);
+        var w_width = $window.width();
+        var w_height = $window.height();
+
+        var svgContainer = d3.select('#hexagon')
+          .append('svg')
+          .attr('width', w_width)
+          .attr('height', w_height);
+
+        var hexagon_grid = new Array();
+
+
+        function checkWidth() {
+          var w_width = $window.width();
+          if (w_width > 440) {
+            console.log("changed size")
+          }
+        }
+        // Execute on load
+        checkWidth();
+        // Bind event listener
+        $(window).resize(checkWidth);
+
+
+            
+
+        function setup_hexgon_grid(){
+          var h = Math.sqrt(3) / 2, 
+              radius = 150,
+              hex_distance = 30;
+              hex_w = radius * 2,
+              hex_h = radius * Math.sqrt(3);
+
+          var hex_count_rows = w_width / (hex_w + radius + hex_distance);
+          var hex_count_cols = w_height / (hex_h + hex_distance);
+          console.log("Width:",w_width);
+          console.log("Hex Width:",(radius*2));
+          console.log("Hexagons fitting on screen",hex_count_rows);
+
+          for (i = 0; i < hex_count_rows; i++){
+            for (j = 0; j < hex_count_cols; j ++){
+
+              var xp = hex_w * i + i * (radius + hex_distance);
+              var yp = hex_h * j + j * hex_distance;
+
+              var p1 = {'x': radius + xp, 
+                        'y': yp};
+              var p2 = {'x': radius / 2 + xp,
+                        'y': radius * h + yp};
+              var p3 = {'x': -radius / 2 + xp,
+                        'y': radius * h + yp};
+              var p4 = {'x': -radius + xp,
+                        'y': yp};
+              var p5 = {'x': -radius / 2 + xp,
+                        'y': -radius * h + yp};
+              var p6 = {'x': radius / 2 + xp,
+                        'y': -radius * h + yp};
+              var _hexagon = [p1,p2,p3,p4,p5,p6];
+
+              hexagon_grid.push(_hexagon);
+            }
+          }
+
+          for (i = 0; i < hex_count_rows; i++){
+              for (j = 0; j < hex_count_cols; j ++){
+
+                var xp = hex_distance /2 + 3* hex_w/4 + hex_w * i + i * (radius + hex_distance);
+                var yp = hex_distance /2 + hex_h/2 + hex_h * j + j * hex_distance;
+
+                var p1 = {'x': radius + xp, 
+                          'y': yp};
+                var p2 = {'x': radius / 2 + xp,
+                          'y': radius * h + yp};
+                var p3 = {'x': -radius / 2 + xp,
+                          'y': radius * h + yp};
+                var p4 = {'x': -radius + xp,
+                          'y': yp};
+                var p5 = {'x': -radius / 2 + xp,
+                          'y': -radius * h + yp};
+                var p6 = {'x': radius / 2 + xp,
+                          'y': -radius * h + yp};
+                var _hexagon = [p1,p2,p3,p4,p5,p6];
+
+                hexagon_grid.push(_hexagon);
+              }
+            }
+        }
+        
+        var draw_hexagon = d3.svg.line()
+          .x(function (d) { return d.x;})
+          .y(function (d) { return d.y;})
+          .interpolate('linear');
+          //.interpolate("cardinal-closed")
+          //.tension("0.25");
+
+        function draw_grid(){
+          var k = hexagon_grid.length;
+          console.log(k);
+          for (i = 0;i < k; i++){
+          var enterElements = svgContainer
+            .append('path')
+            .attr('d', draw_hexagon(hexagon_grid[i]))
+            //.attr('stroke', 'red')
+            //.attr('stroke-dasharray', '20,5')
+            //.attr('stroke-width', 3)
+            .attr('fill', 'rgba(255,255,255,1)');
+          }
+        }
+
+        setup_hexgon_grid();
+        draw_grid();
+      </script>
+
+
+
+    </div>
+  </body>
+</html>
+
+
+
+
+
